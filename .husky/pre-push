@@ -1,0 +1,25 @@
+# NVM 설치 확인 및 자동 설치
+if [ ! -d "$HOME/.nvm" ]; then
+  echo "NVM이 설치되어 있지 않습니다. 설치를 시작합니다..."
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+  echo "NVM 설치가 완료되었습니다."
+else
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+fi
+
+# Node.js 22.11.0 설치 확인 및 사용
+if ! nvm list | grep -q "v22.11.0"; then
+  echo "Node.js 22.11.0을 설치합니다..."
+  nvm install 22.11.0
+fi
+
+nvm use 22.11.0
+pnpm run build
+
+if [ $? -ne 0 ]; then
+  echo "빌드 실패 pnpm run build 실행 후 에러를 수정하여 푸시해주세요."
+  exit 1
+fi
