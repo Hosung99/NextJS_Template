@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export default function TestClientPage() {
   const [data, setData] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/hello")
+    fetch('/api/hello')
       .then((res) => res.json())
       .then((json) => setData(json));
   }, []);
