@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "mock-server": "node mock-server.js",
+    "mock-server": "node src/mock/mock-server.mjs",
     "dev:full": "concurrently \"pnpm dev\" \"pnpm mock-server\"",
     "build": "next build",
     "start": "next start",
