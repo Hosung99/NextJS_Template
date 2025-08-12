@@ -14,27 +14,25 @@ NextJS(15.4) App Router + React(19.1)로 설정되어있습니다.
 
 ## 기능
 
-- esLint (import 정렬, 컴포넌트 생성 규칙)
-
-- prettier
-
-- tailwind prettier
-
-- autoprefixer
-
 - 엄격한 tsconfig설정
 
-- API 호출구조 획일화 (fetch) - son
+- esLint (import 정렬, 컴포넌트 생성 규칙) - son
 
-- MSW (목서버, 테스트코드) - leo
+- prettier - son
 
-- CSS normalize (tailwind)
+- tailwind prettier - son
+
+- autoprefixer - son
+
+- 로그인 기능 (NextAuth.js) - son
 
 - pre-commit, pre-push 검사 (husky) - son
 
-- 다크모드 (커스텀 훅) - leo
+- API 호출구조 획일화 (fetch) - leo
 
-- 로그인 기능 (NextAuth.js) - son
+- MSW (목서버, 테스트코드) - leo
+
+- 다크모드 (커스텀 훅) - leo
 
 ## 사용된 라이브러리 및 사용환경
 
