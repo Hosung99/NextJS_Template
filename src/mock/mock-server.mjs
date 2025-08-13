@@ -1,5 +1,5 @@
-import express from "express";
-import cors from "cors";
+import cors from 'cors';
+import express from 'express';
 
 const app = express();
 const port = 9090;
@@ -15,14 +15,14 @@ app.use((req, res, next) => {
 });
 
 // Mock API 라우트들
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "hello from MSW Express Server!" });
+app.get('/api/hello', (req, res) => {
+  res.json({ message: 'hello from MSW Express Server!' });
 });
 
-app.get("/health", (req, res) => {
+app.get('/health', (req, res) => {
   res.json({
-    status: "ok",
-    server: "Express Mock Server",
+    status: 'ok',
+    server: 'Express Mock Server',
     port,
     timestamp: new Date().toISOString(),
   });
@@ -31,7 +31,7 @@ app.get("/health", (req, res) => {
 // 404 핸들러
 app.use((req, res) => {
   res.status(404).json({
-    error: "Route not found",
+    error: 'Route not found',
     method: req.method,
     path: req.path,
   });
