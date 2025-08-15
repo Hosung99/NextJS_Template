@@ -93,7 +93,6 @@ const eslintConfig = [
       '**/test/*',
       'src/utils/api/**',
       'src/types/api/**',
-      '.next/**',
     ],
   },
 ];

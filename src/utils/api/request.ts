@@ -14,24 +14,19 @@ const buildQueryString = (query: Record<string, any>): string => {
   return params.toString();
 };
 
-const determineContentType = (
-  body: unknown,
-  type?: ContentType,
-): string | undefined => {
+const determineContentType = (body: unknown, type?: ContentType): string | undefined => {
   if (type) return type;
+  if (!body) return undefined;
 
   if (body instanceof FormData) return undefined;
   if (body instanceof Blob) return 'application/octet-stream';
   if (typeof body === 'string') return ContentType.Text;
   if (body && typeof body === 'object') return ContentType.Json;
 
-  return ContentType.Json;
+  return undefined;
 };
 
-const prepareBody = (
-  body: unknown,
-  contentType?: string,
-): string | FormData | Blob | undefined => {
+const prepareBody = (body: unknown, contentType?: string): string | FormData | Blob | undefined => {
   if (!body) return undefined;
 
   if (body instanceof FormData || body instanceof Blob) {
@@ -56,15 +51,7 @@ const prepareBody = (
 };
 
 const createRequest = async <T>(params: FullRequestParams): Promise<T> => {
-  const {
-    path,
-    query,
-    body,
-    type,
-    blob,
-    timeout = 10000,
-    ...options
-  } = params;
+  const { path, query, body, type, blob, timeout = 10000, ...options } = params;
 
   // URL 구성
   let url = `${API_BASE_URL}${path}`;
@@ -105,7 +92,19 @@ const createRequest = async <T>(params: FullRequestParams): Promise<T> => {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      let errorMessage = `http error status: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        errorMessage = response.statusText || errorMessage;
+      }
+
+      throw {
+        message: errorMessage,
+        status: response.status,
+        code: response.statusText,
+      } as ApiError;
     }
 
     // Blob 응답 처리
