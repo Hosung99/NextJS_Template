@@ -14,20 +14,27 @@ const buildQueryString = (query: Record<string, any>): string => {
   return params.toString();
 };
 
-const determineContentType = (body: unknown, type?: ContentType): string | undefined => {
-  if (type) return type;
-  if (!body) return undefined;
+const determineContentType = (body: unknown, type?: ContentType) => {
+  if (type) {
+    return type;
+  }
 
-  if (body instanceof FormData) return undefined;
-  if (body instanceof Blob) return 'application/octet-stream';
-  if (typeof body === 'string') return ContentType.Text;
-  if (body && typeof body === 'object') return ContentType.Json;
-
-  return undefined;
+  switch (true) {
+    case body instanceof Blob:
+      return 'application/octet-stream';
+    case typeof body === 'string':
+      return ContentType.Text;
+    case body && typeof body === 'object':
+      return ContentType.Json;
+    default:
+      return undefined;
+  }
 };
 
 const prepareBody = (body: unknown, contentType?: string): string | FormData | Blob | undefined => {
-  if (!body) return undefined;
+  if (!body) {
+    return undefined;
+  }
 
   if (body instanceof FormData || body instanceof Blob) {
     return body;
@@ -57,7 +64,9 @@ const createRequest = async <T>(params: FullRequestParams): Promise<T> => {
   let url = `${API_BASE_URL}${path}`;
   if (query) {
     const queryString = buildQueryString(query);
-    if (queryString) url += `?${queryString}`;
+    if (queryString) {
+      url += `?${queryString}`;
+    }
   }
 
   // Content-Type 결정
