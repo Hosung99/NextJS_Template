@@ -1,8 +1,11 @@
 import { http, HttpResponse } from 'msw';
 
+import { HelloResponse } from '@/services/mock/dto';
+
 export const handlers = [
   http.get('*/api/hello', () => {
     console.log('[MSW] Intercepted /api/hello request');
-    return HttpResponse.json({ message: 'hello from MSW' });
+    const response: HelloResponse = { message: 'hello from MSW' };
+    return HttpResponse.json(response);
   }),
 ];

@@ -1,5 +1,7 @@
 // Client MSW 데이터 검증 테스트
 
+import { HelloResponse } from '@/services/mock/dto';
+
 const mockFetchClient = jest.fn();
 global.fetch = mockFetchClient;
 
@@ -9,10 +11,8 @@ describe('Client MSW 데이터 페칭 테스트', () => {
   });
 
   test('MSW에서 올바른 JSON 데이터 형식 검증', async () => {
-    const expectedData = {
+    const expectedData: HelloResponse = {
       message: 'hello from MSW',
-      userId: 123,
-      active: true,
     };
 
     mockFetchClient.mockResolvedValueOnce({
@@ -22,14 +22,10 @@ describe('Client MSW 데이터 페칭 테스트', () => {
     });
 
     const response = await fetch('/api/hello');
-    const data = await response.json();
+    const data: HelloResponse = await response.json();
 
     expect(data).toHaveProperty('message');
-    expect(data).toHaveProperty('userId');
-    expect(data).toHaveProperty('active');
     expect(data.message).toBe('hello from MSW');
-    expect(typeof data.userId).toBe('number');
-    expect(typeof data.active).toBe('boolean');
   });
 
   test('MSW 에러 응답 데이터 검증', async () => {
