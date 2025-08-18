@@ -91,8 +91,6 @@ const eslintConfig = [
       '*.config.js',
       '*.config.mjs',
       '**/test/*',
-      'src/utils/api/**',
-      'src/types/api/**',
     ],
   },
 ];
