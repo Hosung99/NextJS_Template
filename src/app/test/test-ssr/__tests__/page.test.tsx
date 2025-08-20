@@ -2,6 +2,8 @@
  * @jest-environment node
  */
 
+import { HelloResponse } from '@/services/mock/dto';
+
 const mockServerUrl = 'http://localhost:9090';
 
 const mockFetchSSR = jest.fn();
@@ -13,10 +15,8 @@ describe('SSR 데이터 페칭 테스트', () => {
   });
 
   test('정상 JSON 데이터가 올바른 형식으로 오는지 검증', async () => {
-    const expectedData = {
+    const expectedData: HelloResponse = {
       message: 'hello from MSW Express Server!',
-      timestamp: '2024-01-01T00:00:00.000Z',
-      status: 'success',
     };
 
     mockFetchSSR.mockResolvedValueOnce({
@@ -29,14 +29,10 @@ describe('SSR 데이터 페칭 테스트', () => {
     });
 
     const response = await fetch(`${mockServerUrl}/api/hello`);
-    const data = await response.json();
+    const data: HelloResponse = await response.json();
 
     expect(data).toHaveProperty('message');
-    expect(data).toHaveProperty('timestamp');
-    expect(data).toHaveProperty('status');
     expect(data.message).toBe('hello from MSW Express Server!');
-    expect(data.status).toBe('success');
-    expect(typeof data.timestamp).toBe('string');
   });
 
   test('에러 응답 데이터 검증', async () => {

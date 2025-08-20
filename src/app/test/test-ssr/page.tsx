@@ -1,27 +1,19 @@
 // app/test-ssr/page.tsx
+import { HelloResponse } from '@/services/mock/dto';
+import { request } from '@/utils/api/request';
 
 export const runtime = 'nodejs';
 
 export default async function TestSSRPage() {
-  // Express 모킹 서버 사용 (포트 9090)
-  const mockServerUrl = 'http://localhost:9090';
-  const res = await fetch(`${mockServerUrl}/api/hello`, {
-    cache: 'no-store',
-    redirect: 'manual',
-  });
-  const contentType = res.headers.get('content-type') ?? '';
-
-  if (!res.ok || !contentType.includes('application/json')) {
-    const text = await res.text();
-    // 여기가 HTML/리다이렉트 원인 확인 포인트
+  try {
+    const data = await request<HelloResponse>('GET', '/api/hello');
+    return <pre>{JSON.stringify(data, null, 2)}</pre>;
+  } catch (error: any) {
     return (
       <pre>
-        {`NON-JSON RESPONSE\nstatus: ${res.status}\nct: ${contentType}\nurl: ${res.url}\n\n`}
-        {text.slice(0, 500)}
+        {`ERROR\nstatus: ${error.status}\nmessage: ${error.message}\n\n`}
+        {JSON.stringify(error, null, 2)}
       </pre>
     );
   }
-
-  const data = await res.json();
-  return <pre>{JSON.stringify(data, null, 2)}</pre>;
 }
