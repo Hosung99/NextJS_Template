@@ -15,6 +15,12 @@ const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   ...compat.plugins('import'),
   {
+    settings: {
+      'import/resolver': {
+        typescript: true,
+        node: true,
+      },
+    },
     rules: {
       // Code Quality Rules
       'no-console': 'warn',
@@ -70,7 +76,6 @@ const eslintConfig = [
       'import/newline-after-import': 'error',
       'import/no-duplicates': 'error',
       'import/no-relative-packages': 'error',
-      'import/no-relative-parent-imports': 'warn',
     },
   },
   {
@@ -91,6 +96,7 @@ const eslintConfig = [
       '*.config.js',
       '*.config.mjs',
       '**/test/*',
+      'instrumentation.ts',
     ],
   },
 ];
