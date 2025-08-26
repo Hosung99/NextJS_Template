@@ -1,6 +1,8 @@
-import { ContentType, FullRequestParams, ApiError } from '@/types/api/api';
+import { getServerSession } from 'next-auth';
+import { useSession } from 'next-auth/react';
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { ContentType, FullRequestParams, ApiError, HttpMethod, CreateRequest } from '@/types/api/api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -57,7 +59,7 @@ const prepareBody = (body: unknown, contentType?: string): string | FormData | B
   return String(body);
 };
 
-const createRequest = async <T>(params: FullRequestParams): Promise<T> => {
+const createRequest = async <T>(params: CreateRequest): Promise<T> => {
   const { path, query, body, type, blob, timeout = 10000, ...options } = params;
 
   // URL 구성
@@ -65,8 +67,8 @@ const createRequest = async <T>(params: FullRequestParams): Promise<T> => {
   if (query) {
     const queryString = buildQueryString(query);
     if (queryString) {
-      url += `?${queryString}`;
     }
+    url += `?${queryString}`;
   }
 
   // Content-Type 결정
@@ -146,11 +148,39 @@ export const request = <T>(
   path: string,
   body?: unknown,
   options?: Partial<FullRequestParams>,
+  token?: string,
 ): Promise<T> => {
   return createRequest<T>({
     path,
     method,
     body,
     ...options,
+    headers: {
+      ...options?.headers,
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
   });
+};
+
+// client 컴포넌트 요청
+export const useRequest = () => {
+  const { data: session } = useSession();
+  return <T>(
+    method: HttpMethod,
+    path: string,
+    body?: unknown,
+    options?: Partial<FullRequestParams>,
+  ): Promise<T> => request<T>(method, path, body, options, session?.user?.accessToken);
+};
+
+//  server 컴포넌트 요청
+export const serverRequest = async <T>(
+  method: HttpMethod,
+  path: string,
+  body?: unknown,
+  options?: Partial<FullRequestParams>,
+): Promise<T> => {
+  const session = await getServerSession(authOptions);
+
+  return request<T>(method, path, body, options, session?.user?.accessToken);
 };
