@@ -7,12 +7,15 @@ export enum ContentType {
 
 export interface FullRequestParams extends Omit<RequestInit, 'body'> {
   secure?: boolean;
-  path: string;
-  body?: unknown;
   query?: Record<string, any>;
   type?: ContentType;
   blob?: boolean;
   timeout?: number;
+}
+
+export interface CreateRequest extends FullRequestParams {
+  path: string;
+  body?: unknown;
 }
 
 export interface ApiError {
@@ -20,3 +23,5 @@ export interface ApiError {
   status: number;
   code?: string;
 }
+
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
