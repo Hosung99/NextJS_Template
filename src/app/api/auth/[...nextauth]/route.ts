@@ -5,7 +5,7 @@ import GithubProvider from 'next-auth/providers/github';
 
 import { request } from '@/utils/api/request';
 
-import { LoginResponse } from '../../../../services/auth/dto';
+import { LoginResponse, RefreshResponse } from '../../../../services/auth/dto';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -40,17 +40,36 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      try {
-        if (user) {
-          token.id = user.id;
-          token.accessToken = user.accessToken;
-          token.refreshToken = user.refreshToken;
-          token.role = user.role;
-        }
-      } catch (error) {
-        console.error('jwt callback error:', error);
+      if (user) {
+        return {
+          ...token,
+          id: user.id,
+          role: user.role,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+          expireAt: user.expireAt,
+        };
       }
-      return token;
+
+      if (Date.now() < token.expireAt) {
+        return token;
+      } else {
+        try {
+          const response = await request<RefreshResponse>('POST', '/auth/refresh', {
+            refreshToken: token.refreshToken,
+          });
+
+          return {
+            ...token,
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+            expireAt: response.expireAt,
+          };
+        } catch (error) {
+          console.error('토큰 갱신 실패', error);
+          return { ...token, error: 'RefreshAccessTokenError' };
+        }
+      }
     },
 
     async session({ session, token }) {
