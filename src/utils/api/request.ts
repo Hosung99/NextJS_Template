@@ -1,8 +1,10 @@
-import { getServerSession } from 'next-auth';
-import { useSession } from 'next-auth/react';
-
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { ContentType, FullRequestParams, ApiError, HttpMethod, CreateRequest } from '@/types/api/api';
+import {
+  ContentType,
+  FullRequestParams,
+  ApiError,
+  HttpMethod,
+  CreateRequest,
+} from '@/types/api/api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -67,8 +69,8 @@ const createRequest = async <T>(params: CreateRequest): Promise<T> => {
   if (query) {
     const queryString = buildQueryString(query);
     if (queryString) {
+      url += `?${queryString}`;
     }
-    url += `?${queryString}`;
   }
 
   // Content-Type 결정
@@ -160,27 +162,4 @@ export const request = <T>(
       ...(token && { Authorization: `Bearer ${token}` }),
     },
   });
-};
-
-// client 컴포넌트 요청
-export const useRequest = () => {
-  const { data: session } = useSession();
-  return <T>(
-    method: HttpMethod,
-    path: string,
-    body?: unknown,
-    options?: Partial<FullRequestParams>,
-  ): Promise<T> => request<T>(method, path, body, options, session?.user?.accessToken);
-};
-
-//  server 컴포넌트 요청
-export const serverRequest = async <T>(
-  method: HttpMethod,
-  path: string,
-  body?: unknown,
-  options?: Partial<FullRequestParams>,
-): Promise<T> => {
-  const session = await getServerSession(authOptions);
-
-  return request<T>(method, path, body, options, session?.user?.accessToken);
 };
