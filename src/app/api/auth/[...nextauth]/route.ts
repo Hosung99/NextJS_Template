@@ -3,9 +3,8 @@ import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GithubProvider from 'next-auth/providers/github';
 
+import { LoginResponse, RefreshResponse } from '@/services/auth/dto';
 import { request } from '@/utils/api/request';
-
-import { LoginResponse, RefreshResponse } from '../../../../services/auth/dto';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -73,7 +72,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      if (token) {
+      if (token && !token.error) {
         session.user.id = token.id;
         session.user.accessToken = token.accessToken;
         session.user.role = token.role;
