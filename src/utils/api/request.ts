@@ -1,6 +1,10 @@
-import { ContentType, FullRequestParams, ApiError } from '@/types/api/api';
-
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+import {
+  ContentType,
+  FullRequestParams,
+  ApiError,
+  HttpMethod,
+  CreateRequest,
+} from '@/types/api/api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -57,7 +61,7 @@ const prepareBody = (body: unknown, contentType?: string): string | FormData | B
   return String(body);
 };
 
-const createRequest = async <T>(params: FullRequestParams): Promise<T> => {
+const createRequest = async <T>(params: CreateRequest): Promise<T> => {
   const { path, query, body, type, blob, timeout = 10000, ...options } = params;
 
   // URL 구성
@@ -146,11 +150,16 @@ export const request = <T>(
   path: string,
   body?: unknown,
   options?: Partial<FullRequestParams>,
+  token?: string,
 ): Promise<T> => {
   return createRequest<T>({
     path,
     method,
     body,
     ...options,
+    headers: {
+      ...options?.headers,
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
   });
 };
