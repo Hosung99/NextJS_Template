@@ -24,9 +24,9 @@ NextJS(15.4) App Router + React(19.1)로 설정되어있습니다.
 
 - autoprefixer - son
 
-- 로그인 기능 (NextAuth.js) - son
-
 - pre-commit, pre-push 검사 (husky) - son
+
+- 로그인 기능 (NextAuth.js) - leo
 
 - API 호출구조 획일화 (fetch) - leo
 
