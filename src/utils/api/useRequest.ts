@@ -1,8 +1,7 @@
 import { useSession } from 'next-auth/react';
 
 import { HttpMethod, FullRequestParams } from '@/types/api/api';
-
-import { request } from './request';
+import { request } from '@/utils/api/request';
 
 // client 컴포넌트 요청
 export const useRequest = () => {

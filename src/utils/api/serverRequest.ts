@@ -2,8 +2,7 @@ import { getServerSession } from 'next-auth';
 
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { HttpMethod, FullRequestParams } from '@/types/api/api';
-
-import { request } from './request';
+import { request } from '@/utils/api/request';
 
 //  server 컴포넌트 요청
 export const serverRequest = async <T>(
